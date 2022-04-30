@@ -17,7 +17,7 @@ type Result struct {
 }
 
 // calculate the value per second for given transaction
-func (t Transaction) valPerSec() float64 {
+func (t Transaction) ValPerSec(latency map[string]int) float64 {
 	if lat, ok := latency[t.BankCountryCode]; ok {
 		return t.Amount / float64(lat)
 	} else {
@@ -26,10 +26,15 @@ func (t Transaction) valPerSec() float64 {
 }
 
 func (t Transaction) String() string {
-	return fmt.Sprintf("ID:%s: Amount:%f, BankCountry:%s, Latency:%d, ValuePerSec:%f", t.ID, t.Amount, t.BankCountryCode, latency[t.BankCountryCode], t.valPerSec())
+	return fmt.Sprintf("ID:%s: Amount:%f, BankCountry:%s", t.ID, t.Amount, t.BankCountryCode)
 }
 
-func processTransactions(transactions []Transaction) []Result {
+type Processor struct {
+	//stores latency data read from file
+	Latency map[string]int
+}
+
+func (processor *Processor) ProcessTransactions(transactions []Transaction) []Result {
 	result := make([]Result, 0)
 	for _, txn := range transactions {
 		r := Result{ID: txn.ID}
@@ -48,12 +53,16 @@ func processTransaction(transaction Transaction) bool {
 }
 
 // function should return a subset (or full array)
-// that will maximize the USD value and fit the transactions under 1 second
-func prioritize(transactions []Transaction, totalTime int) []Transaction {
+// that will maximize the USD value and fit the transactions under given time limit
+func (processor *Processor) Prioritize(transactions []Transaction, totalTime int) []Transaction {
 	//sort by value per second
 	sort.Slice(transactions, func(i, j int) bool {
-		valPerSecI := transactions[i].Amount / float64(latency[transactions[i].BankCountryCode])
-		valPerSecJ := transactions[j].Amount / float64(latency[transactions[j].BankCountryCode])
+		valPerSecI := transactions[i].ValPerSec(processor.Latency)
+		valPerSecJ := transactions[j].ValPerSec(processor.Latency)
+		if valPerSecI == valPerSecJ {
+			return transactions[i].Amount > transactions[j].Amount
+		}
+		// return valPerSecI > valPerSecJ
 		return valPerSecI > valPerSecJ
 	})
 
@@ -61,10 +70,10 @@ func prioritize(transactions []Transaction, totalTime int) []Transaction {
 	countTime := 0
 	countAmount := 0.0
 	for _, txn := range transactions {
-		// fmt.Printf("Txn:%v\n", txn)
+		fmt.Printf("Txn:%v (value/s:%f)\n", txn, txn.ValPerSec(processor.Latency))
 		//keep adding transactions as long as time limit allows
-		if (countTime + latency[txn.BankCountryCode]) <= totalTime {
-			countTime += latency[txn.BankCountryCode]
+		if (countTime + processor.Latency[txn.BankCountryCode]) <= totalTime {
+			countTime += processor.Latency[txn.BankCountryCode]
 			countAmount += txn.Amount
 			priority = append(priority, txn)
 		}

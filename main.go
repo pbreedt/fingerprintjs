@@ -2,12 +2,9 @@ package main
 
 import "fmt"
 
-//stores latency data read from file
-var latency map[string]int
-
 func main() {
-	var err error
-	latency, err = ReadLatencyFile("./input/api_latencies.json")
+	// var err error
+	latency, err := ReadLatencyFile("./input/api_latencies.json")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -18,9 +15,10 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Println("Transactions:", len(txns))
+	fmt.Println("All Transactions:", len(txns))
 
-	ptxns := prioritize(txns, 50)
-	r := processTransactions(ptxns)
+	processor := Processor{Latency: latency}
+	ptxns := processor.Prioritize(txns, 50)
+	r := processor.ProcessTransactions(ptxns)
 	fmt.Println("Results", r)
 }
