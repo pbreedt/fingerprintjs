@@ -70,7 +70,7 @@ func (processor *Processor) Prioritize(transactions []Transaction, totalTime int
 	countTime := 0
 	countAmount := 0.0
 	for _, txn := range transactions {
-		fmt.Printf("Txn:%v (value/s:%f)\n", txn, txn.ValPerSec(processor.Latency))
+		// fmt.Printf("Txn:%v (value/s:%f)\n", txn, txn.ValPerSec(processor.Latency))
 		//keep adding transactions as long as time limit allows
 		if (countTime + processor.Latency[txn.BankCountryCode]) <= totalTime {
 			countTime += processor.Latency[txn.BankCountryCode]
@@ -79,6 +79,7 @@ func (processor *Processor) Prioritize(transactions []Transaction, totalTime int
 		}
 	}
 
-	fmt.Println("Time:", countTime, "Amount:", countAmount)
+	fmt.Printf("Total processing time:%d\n", countTime)
+	fmt.Printf("Total value processed:%.2f\n", countAmount)
 	return priority
 }
