@@ -48,7 +48,7 @@ func (processor *Processor) ProcessTransactions(transactions []Transaction) []Re
 //fake processing function - without latency applied
 //(transactions with ID's starting with 'a' are considered fraudulent)
 func processTransaction(transaction Transaction) bool {
-	fmt.Println("Process txn: ", transaction)
+	// fmt.Println("Process txn: ", transaction)
 	return (string(transaction.ID[0]) == "a")
 }
 
