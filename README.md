@@ -53,8 +53,7 @@ The basic principle is to calculate the 'value per second' for each transaction.
 Next, I sort all the transactions according to the 'value per second' values, with the highest amounts taking preference if any two transactions have the same 'value per second'.  
 
 IMPROVEMENT:  
-
-A possible improvement could include calculating combinations of transactions that might yield a larger 'value per second' than a single transaction, but for simplicity and in the interest of time, I did not explore this avenue.
+Keep track of the time difference between processing time and total available time.  Try and fill this time a little bit better.
 
 __General code__
 
