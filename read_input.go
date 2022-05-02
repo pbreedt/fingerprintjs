@@ -24,7 +24,7 @@ func ReadLatencyFile(filepath string) (map[string]int, error) {
 	return lat, nil
 }
 
-func ReadTransactionFile(filepath string) ([]Transaction, error) {
+func ReadTransactionFile(filepath string, latency map[string]int) ([]Transaction, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return nil, fmt.Errorf("error opening transaction file %s:%s", filepath, err.Error())
@@ -44,7 +44,7 @@ func ReadTransactionFile(filepath string) ([]Transaction, error) {
 				if err != nil {
 					fmt.Printf("WARNING: amount value '%s' is not a valid amount. (%s)\n", fields[1], line)
 				} else {
-					txn := Transaction{ID: fields[0], Amount: amt, BankCountryCode: fields[2]}
+					txn := Transaction{ID: fields[0], Amount: amt, BankCountryCode: fields[2], Latency: latency[fields[2]]}
 					transactions = append(transactions, txn)
 				}
 			} else {

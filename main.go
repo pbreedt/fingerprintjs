@@ -15,7 +15,7 @@ func main() {
 	}
 	// fmt.Println("Latency:", latency)
 
-	txns, err := ReadTransactionFile(transactionsFile)
+	txns, err := ReadTransactionFile(transactionsFile, latency)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

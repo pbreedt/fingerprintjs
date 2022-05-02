@@ -39,18 +39,20 @@ The [question that was posted](https://gist.github.com/Valve/70d01f51885b4d0cdfe
 > What is the max USD value that can be processed in 50ms, 60ms, 90ms, 1000ms?
 
 My findings are as follows:  
-| Time frame (ms) | Total Value |
-|:----------------|------------:|
-| 50              |     3637.98 |
-| 60              |     4362.01 |
-| 90              |     6870.48 |
-| 1000            |    35471.81 |
+| Time frame (ms) | Total Value | New Total|Actual ms|
+|:----------------|------------:|---------:|:--------|
+| 50              |     3637.98 | 4139.43  |  (50)   |
+| 60              |     4362.01 | 4624.86  |  (56)   |
+| 90              |     6870.48 | 6972.29  |  (90)   |
+| 1000            |    35471.81 | 35471.81 |  (1000) |
 
 __The algorithm__
 
 The basic principle is to calculate the 'value per second' for each transaction.  This is, the USD value that will be processed for every 1s spend processing the particular transaction.
 
 Next, I sort all the transactions according to the 'value per second' values, with the highest amounts taking preference if any two transactions have the same 'value per second'.  
+
+IMPROVEMENT:  
 
 A possible improvement could include calculating combinations of transactions that might yield a larger 'value per second' than a single transaction, but for simplicity and in the interest of time, I did not explore this avenue.
 
